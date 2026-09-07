@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PHQ-9 Questionnaire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <style>
+    body {
+      padding: 1.2rem 0.8rem;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .container {
+      max-width: 700px;
+    }
+
+    .form-label {
+      font-size: 17px;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    h3 {
+      font-size: 24px;
+    }
+
+    .subtitle-text {
+      text-align: center;
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+
+    .btn-primary {
+      font-size: 17px;
+      padding: 0.6rem 1.8rem;
+    }
+
+    /* 单题容器 */
+    .phq-item {
+      margin-bottom: 2.4rem;
+    }
+
+    /* 滑块外层容器 */
+    .slider-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .phq-slider {
+      width: 100%;
+      margin-bottom: 0.6rem;
+    }
+
+    /* 底部四个刻度标签，居中对齐对应刻度 */
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #444;
+    }
+
+    .slider-labels span {
+      width: 23%;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* ========== 滑块轨道4个定位圆点 ========== */
+    input[type="range"].phq-slider {
+      -webkit-appearance: none;
+      height: 6px;
+      background: #dee2e6;
+      border-radius: 5px;
+      background-image:
+        radial-gradient(circle, #adb5bd 7px, transparent 7px),
+        radial-gradient(circle, #adb5bd 7px, transparent 7px),
+        radial-gradient(circle, #adb5bd 7px, transparent 7px),
+        radial-gradient(circle, #adb5bd 7px, transparent 7px);
+      background-size: 14px 14px;
+      background-repeat: no-repeat;
+      background-position: 0% 50%, 33.33% 50%, 66.66% 50%, 100% 50%;
+    }
+
+    /* 拖动圆球样式 */
+    input[type="range"].phq-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0d6efd;
+      border: 2px solid white;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Firefox兼容 */
+    input[type="range"].phq-slider::-moz-range-track {
+      height: 6px;
+      background: #dee2e6;
+      border-radius: 5px;
+    }
+
+    input[type="range"].phq-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0d6efd;
+      border: 2px solid white;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h3 class="text-center mb-2">PHQ-9 Depression Questionnaire</h3>
+    <!-- 优化后的鼓励性副标题 -->
+    <p class="subtitle-text">
+      You are nearly done! Simply answer these 9 brief questions after viewing the videos, and you will receive your
+      preliminary depression assessment result.
+    </p>
+
+    <form method="POST" id="phqForm">
+      {% for i in range(9) %}
+      <div class="phq-item">
+        <label class="form-label">{{ i+1 }}. {{ questions[i] }}</label>
+        <div class="slider-wrap">
+          <input class="phq-slider" type="range" min="0" max="3" step="1" name="q{{ i }}" value="0" required>
+          <div class="slider-labels">
+            <span>Not at all</span>
+            <span>Several days</span>
+            <span>More than half the days</span>
+            <span>Nearly every day</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      <div class="mt-5">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Consent Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f7f8;
+            color: #20262d;
+            padding: 2rem 0 4rem;
+        }
+
+        .form-shell {
+            max-width: 880px;
+            margin: auto;
+            background: #fff;
+            padding: 2.5rem;
+            border: 1px solid #dde2e6;
+            border-radius: 8px;
+        }
+
+        .question {
+            padding: 1.1rem 0;
+            border-bottom: 1px solid #e8ebed;
+        }
+
+        .question-text {
+            display: block;
+            font-weight: 600;
+            margin-bottom: .75rem;
+        }
+
+        .required {
+            color: #b42318;
+        }
+
+        .choice-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .final-choice {
+            padding: .75rem 0;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding-top: 0;
+            }
+
+            .form-shell {
+                padding: 1.25rem;
+                border-left: 0;
+                border-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <div class="form-shell">
+            <h1 class="h2 mb-2">Consent Form</h1>
+            <p class="text-muted mb-1">Participant ID: {{ participant_id }}</p>
+            <p class="text-muted">Please answer every required item before submitting.</p>
+
+            {% if error %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST">
+                <input type="hidden" name="participant_id" value="{{ participant_id }}">
+
+                <fieldset class="question">
+                    <legend class="question-text fs-6">Participation decision <span class="required">*</span>
+                    </legend>
+                    <div class="form-check final-choice">
+                        <input class="form-check-input" type="radio" id="final-agree" name="final_consent" value="agree"
+                            required>
+                        <label class="form-check-label" for="final-agree">I agree to take part in this research
+                            study</label>
+                    </div>
+                    <div class="form-check final-choice">
+                        <input class="form-check-input" type="radio" id="final-disagree" name="final_consent"
+                            value="disagree" required>
+                        <label class="form-check-label" for="final-disagree">I do not agree to take part in this
+                            research study</label>
+                    </div>
+                </fieldset>
+
+                <div class="question">
+                    <label class="question-text" for="participant-name">Name of Participant <span
+                            class="required">*</span></label>
+                    <input class="form-control" type="text" id="participant-name" name="name" maxlength="200"
+                        autocomplete="name" required>
+                </div>
+
+                <div class="question">
+                    <label class="question-text" for="age">Age <span class="required">*</span></label>
+                    <input class="form-control" type="number" id="age" name="age" min="0" max="120" inputmode="numeric"
+                        required>
+                </div>
+
+                <div class="question">
+                    <label class="question-text" for="ethnicity">Ethnicity <span class="required">*</span></label>
+                    <select class="form-select" id="ethnicity" name="ethnicity" required>
+                        <option value="" selected disabled>Select an option</option>
+                        {% for option in ethnicity_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg mt-4">Submit Consent Form</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.getElementById("select-all-yes").addEventListener("click", function () {
+            document.querySelectorAll('input[type="radio"][value="yes"]').forEach(function (input) {
+                input.checked = true;
+            });
+        });
+    </script>
+</body>
+
+</html>

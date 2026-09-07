@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Your Experiment Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 1rem 0.6rem;
+            background: #f8f9fa;
+            font-size: 17px;
+        }
+
+        .container {
+            max-width: 850px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.6rem;
+            box-shadow: 0 4px 12px #00000012;
+        }
+
+        .warning-notice {
+            color: #bb2424;
+            background: #fff2f2;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1.2rem 0;
+        }
+
+        .suggest-block {
+            background: #f0f6ff;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="result-card">
+            <h2 class="text-center mb-4">Experiment Feedback</h2>
+
+            <div class="warning-notice">
+                ⚠️ Important: This feedback is only for academic research purposes.
+                It cannot replace professional medical diagnosis.
+                Please consult qualified mental health professionals if you feel persistent low mood.
+            </div>
+
+            <h4>Your PHQ-9 Depression Score: <span class="text-primary">{{phq_score}}</span></h4>
+            <p>Severity Level: <strong>{{depression_level}}</strong></p>
+
+            <div class="suggest-block">
+                <h5>Suggestions</h5>
+                <p>{{suggestion_text}}</p>
+            </div>
+
+            <div class="mt-5 text-center">
+                <p class="fw-bold text-success" style="font-size: 1.1rem;">
+                    Thank you for participating! You may now close this page.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

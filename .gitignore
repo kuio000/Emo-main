@@ -1,0 +1,50 @@
+# Local Python environments and caches
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.codex-clean-repo.git/
+.DS_Store
+Thumbs.db
+
+# Runtime logs
+*.log
+
+# Databases containing participant or application data
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# Participant webcam data and generated recordings
+captured_images/
+frames/
+recordings/
+uploads/
+frame_*.jpg
+
+# Study media and identifying documents are distributed separately
+*.mp4
+*.mpg
+*.webm
+*.pdf
+*.docx
+
+# Local backups and packaged copies
+backup/
+backups/
+*.zip
+*.rar
+
+# Large local model artifacts
+*.pth
+*.hdf5

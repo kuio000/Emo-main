@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Use of Your Webcam Photos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 1rem 0;
+        }
+
+        .container {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .card-box {
+            max-width: 920px;
+            margin: auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.2rem;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 2rem 0;
+            }
+
+            .card-box {
+                padding: 2.5rem;
+            }
+        }
+
+        .webcam-notice {
+            background: #fff3cd;
+            border: 1px solid #ffe69c;
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .example-img {
+            max-width: 95px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            margin: 0.4rem auto 0.1rem auto;
+            display: block;
+        }
+
+        .option-card {
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 0.9rem 1.1rem;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
+        }
+
+        .option-card:hover {
+            border-color: #adb5bd;
+        }
+
+        .option-card.selected {
+            border-color: #0d6efd;
+            background: #f0f6ff;
+        }
+
+        .option-title {
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card-box">
+            <h2 class="mb-3 text-center">Use of Your Webcam Photos</h2>
+
+            <div class="webcam-notice">
+                <strong>⚠️ Please note:</strong> During the experiment, your webcam will be
+                turned on and will capture still images of your face while you watch the video.
+                Below is an example of the kind of image that will be captured.
+            </div>
+
+            <img src="{{ url_for('static', filename='images/front_camera_example.jpg') }}"
+                alt="Example of a captured webcam image" class="example-img">
+
+            <p class="text-muted text-center small mb-3">Example of a captured image</p>
+
+            <hr class="my-3">
+
+            <p class="fw-semibold">
+                Please choose how you would like your photos to be used:
+            </p>
+
+            <form method="POST" action="{{ url_for('data_consent') }}" id="consentForm">
+                <input type="hidden" name="participant_id" value="{{ participant_id }}">
+
+                <!-- Option 1 -->
+                <label class="option-card d-block" for="opt1">
+                    <input class="form-check-input me-2" type="radio" name="consent_option" id="opt1"
+                        value="open_research">
+                    <span class="option-title">1. Use for open research</span>
+                    <p class="mb-0 mt-1 text-secondary small">
+                        Allow photos to be shared for future academic research under a strict End User License Agreement
+                        (EULA). Non-commercial use only.
+                    </p>
+                </label>
+
+                <!-- Option 2 (已更新为 master's project) -->
+                <label class="option-card d-block" for="opt2">
+                    <input class="form-check-input me-2" type="radio" name="consent_option" id="opt2"
+                        value="this_research_only">
+                    <span class="option-title">2. Use for this research only</span>
+                    <p class="mb-0 mt-1 text-secondary small">
+                        Restrict photo storage strictly to this master's project. All photos will be permanently deleted
+                        once the study is completed.
+                    </p>
+                </label>
+
+                <!-- Option 3 -->
+                <label class="option-card d-block" for="opt3">
+                    <input class="form-check-input me-2" type="radio" name="consent_option" id="opt3"
+                        value="immediate_deletion">
+                    <span class="option-title">3. Immediate deletion</span>
+                    <p class="mb-0 mt-1 text-secondary small">
+                        Delete photos immediately after facial feature extraction and verification. Only anonymous
+                        numerical features will be retained.
+                    </p>
+                </label>
+
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg w-100 w-md-auto" id="continueBtn" disabled>
+                        Continue to Experiment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const cards = document.querySelectorAll('.option-card');
+        const radios = document.querySelectorAll('input[name="consent_option"]');
+        const continueBtn = document.getElementById('continueBtn');
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                cards.forEach(c => c.classList.remove('selected'));
+                this.closest('.option-card').classList.add('selected');
+                continueBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+
+</html>

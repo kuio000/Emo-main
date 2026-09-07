@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Experiment</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            text-align: center;
+            position: relative;
+        }
+
+        h2 {
+            margin-top: 30px;
+        }
+
+        p.description {
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        #instructionBox {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 16px 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            color: #333;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        #instructionBox strong {
+            color: #222;
+        }
+
+        #videoContainer {
+            margin: 20px auto;
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+        }
+
+        #experimentVideo {
+            width: 100%;
+            border-radius: 12px;
+            background: black;
+        }
+
+        /* Webcam preview container */
+        #webcamContainer {
+            position: fixed;
+            bottom: 40px;
+            right: 15px;
+            width: 130px;
+            height: auto;
+            padding: 3px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 99;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none;
+        }
+
+        #webcamContainer.minimized {
+            transform: translateX(calc(100% - 24px));
+            cursor: pointer;
+        }
+
+        #webcam {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            background: #000;
+            display: block;
+            object-fit: cover;
+            object-position: center center;
+            transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+            pointer-events: none;
+        }
+
+        #closeWebcam {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(52, 58, 64, 0.85);
+            color: #fff;
+            border: 2px solid #fff;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.2s;
+        }
+
+        #webcamContainer.minimized #closeWebcam {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #closeWebcam:hover {
+            background: #495057;
+        }
+
+        #statusText {
+            margin-top: 15px;
+            font-size: 15px;
+            color: #333;
+            min-height: 24px;
+        }
+
+        button {
+            margin: 10px 8px 30px 8px;
+            padding: 10px 22px;
+            background-color: #343a40;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background-color: #495057;
+        }
+
+        button:disabled {
+            background-color: #9aa0a6;
+            cursor: not-allowed;
+        }
+
+        .participant-id {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Rest Modal Styles */
+        #restModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 30px 25px;
+            border-radius: 14px;
+            max-width: 400px;
+            width: 85%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            color: #222;
+        }
+
+        .modal-content p {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            video {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            button {
+                width: 90%;
+                padding: 12px;
+                font-size: 16px;
+                margin: 8px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Mental Health Assessment Experiment</h2>
+
+    <p class="description">
+        You will watch 3 short videos. Please enable webcam access throughout.
+    </p>
+    <p class="participant-id">Participant ID: {{ participant_id }}</p>
+
+    <div id="instructionBox">
+        <strong>Before you start:</strong><br>
+        Click <strong>Start Experiment</strong> when ready. When your browser requests camera permission, please select
+        <strong>Allow</strong>. Your webcam preview will appear in the bottom-right corner once the experiment begins,
+        and you may minimize this preview by clicking the top-right dash (-) icon.
+    </div>
+
+    <div id="videoContainer">
+        <video id="experimentVideo" crossorigin="anonymous" playsinline webkit-playsinline controls
+            style="pointer-events: auto;">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <button id="startExperiment">Start Experiment</button>
+    <button id="endExperiment" disabled>End Experiment</button>
+
+    <p id="statusText">Please click Start Experiment when you are ready.</p>
+
+    <!-- Rest Modal -->
+    <div id="restModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Take a Break</h3>
+            <p id="modalDesc">Please take a short break to relax. Click the button below when you are ready for the next
+                video.</p>
+            <button id="nextVideoButton" style="width: 100%; margin: 0;">I am ready, Next Video</button>
+        </div>
+    </div>
+
+    <!-- Webcam preview container -->
+    <div id="webcamContainer">
+        <button id="closeWebcam" title="Minimize preview" aria-label="Minimize preview">−</button>
+        <video id="webcam" autoplay muted playsinline webkit-playsinline></video>
+    </div>
+
+    <script>
+        const videoList = [
+            "https://emo-video-2026.oss-cn-hangzhou.aliyuncs.com/comedy.mp4",
+            "https://emo-video-2026.oss-cn-hangzhou.aliyuncs.com/neutral.mp4",
+            "https://emo-video-2026.oss-cn-hangzhou.aliyuncs.com/sad.mp4"
+        ];
+        let currentVideoIndex = 0;
+        const participantId = {{ participant_id| tojson }};
+
+        let stream = null;
+        let mediaRecorder = null;
+        let recordChunks = [];
+        let currentStimType = "";
+        let isProcessingNext = false;
+
+        $(document).ready(function () {
+            const experimentVideo = document.getElementById('experimentVideo');
+            const webcam = document.getElementById('webcam');
+
+            function loadAndPlayVideo() {
+                // 1. 最终所有视频播放完毕后的退出逻辑
+                if (currentVideoIndex >= videoList.length) {
+                    $('#statusText').text('All video clips completed. Please click "End Experiment" to continue.');
+                    $('#endExperiment').prop('disabled', false);
+
+                    experimentVideo.removeAttribute('controls');
+                    experimentVideo.style.pointerEvents = 'none';
+                    experimentVideo.pause();
+                    return;
+                }
+
+                isProcessingNext = false; // 解锁，允许新视频运行
+                console.log("Loading video index:", currentVideoIndex);
+                currentStimType = videoList[currentVideoIndex].split("/").pop().split(".")[0];
+
+                // 2. 跨平台（iOS Safari/Android Chrome）静音与自动播放设置
+                experimentVideo.muted = true;
+                experimentVideo.setAttribute('muted', '');
+                experimentVideo.setAttribute('playsinline', '');
+                experimentVideo.setAttribute('webkit-playsinline', '');
+
+                experimentVideo.src = videoList[currentVideoIndex];
+                experimentVideo.load();
+
+                // 3. 延时播放以确保 load 完成
+                setTimeout(() => {
+                    const playPromise = experimentVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            console.log("Video played successfully:", currentStimType);
+                            // 播放成功后解开静音
+                            experimentVideo.muted = false;
+
+                            if (!mediaRecorder || mediaRecorder.state === "inactive") {
+                                startRecord();
+                            }
+                        }).catch(err => {
+                            console.warn("Autoplay blocked, keeping muted:", err);
+                            experimentVideo.muted = true;
+                            experimentVideo.play().then(() => {
+                                if (!mediaRecorder || mediaRecorder.state === "inactive") {
+                                    startRecord();
+                                }
+                            });
+                        });
+                    }
+                }, 150);
+            }
+
+            // 监听视频播放结束事件
+            experimentVideo.addEventListener("ended", async function () {
+                if (isProcessingNext) return;
+                isProcessingNext = true;
+
+                console.log("Video ended:", currentStimType);
+
+                // 【核心修复1】：立即暂停并移除 src，防止移动端原生播放器自动回到开头供用户二次点击重播
+                experimentVideo.pause();
+                experimentVideo.removeAttribute('src');
+                experimentVideo.load();
+
+                $('#statusText').text('Video finished, saving data...');
+
+                try {
+                    await stopAndUploadVideo();
+                } catch (err) {
+                    console.error("Upload failed:", err);
+                }
+
+                currentVideoIndex++;
+
+                // 【核心修复2】：如果有下一个视频，跳出 Modal 并等待用户点击
+                if (currentVideoIndex < videoList.length) {
+                    $('#modalTitle').text(`Take a Break (${currentVideoIndex}/${videoList.length} completed)`);
+                    $('#restModal').css('display', 'flex');
+                    $('#statusText').text('Please take a short break.');
+                } else {
+                    // 全部播放完毕
+                    loadAndPlayVideo();
+                }
+            });
+
+            // 点击休息结束按钮，进入下一个视频
+            $('#nextVideoButton').on('click', function () {
+                $('#restModal').hide();
+                loadAndPlayVideo();
+            });
+
+            // 点击开始实验
+            $('#startExperiment').on('click', async function () {
+                try {
+                    $('#instructionBox').hide();
+                    $('#statusText').text('Requesting camera access...');
+
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "user" },
+                        audio: false
+                    });
+                    webcam.srcObject = stream;
+                    $('#webcamContainer').removeClass('minimized').show();
+
+                    $('#startExperiment').prop('disabled', true);
+
+                    // 开始播放第一个视频
+                    loadAndPlayVideo();
+
+                    $('#statusText').text('Experiment started, recording facial video...');
+                } catch (error) {
+                    console.error("Camera error:", error);
+                    $('#instructionBox').show();
+                    $('#statusText').text('Camera permission denied, please refresh and retry.');
+                }
+            });
+
+            // 开始录制摄像头
+            function startRecord() {
+                recordChunks = [];
+                let options;
+                try {
+                    options = { mimeType: "video/mp4;codecs=avc1" };
+                    mediaRecorder = new MediaRecorder(stream, options);
+                } catch (e) {
+                    mediaRecorder = new MediaRecorder(stream);
+                }
+
+                mediaRecorder.ondataavailable = e => {
+                    if (e.data.size > 0) recordChunks.push(e.data);
+                };
+                mediaRecorder.start(100);
+            }
+
+            // 停止录制并上传
+            async function stopAndUploadVideo() {
+                return new Promise(resolve => {
+                    if (!mediaRecorder || mediaRecorder.state !== "recording") {
+                        resolve();
+                        return;
+                    }
+                    mediaRecorder.onstop = async () => {
+                        const blob = new Blob(recordChunks, { type: "video/mp4" });
+                        const file = new File([blob], "face_record.mp4", { type: "video/mp4" });
+                        const formData = new FormData();
+                        formData.append("video", file);
+                        formData.append("participant_id", participantId);
+                        formData.append("video_type", currentStimType);
+
+                        try {
+                            const res = await fetch("/upload_recording", {
+                                method: "POST",
+                                body: formData
+                            });
+                            const data = await res.json();
+                            console.log(currentStimType + " uploaded successfully:", data);
+                        } catch (err) {
+                            console.error("Upload fetch error:", err);
+                        }
+
+                        recordChunks = [];
+                        mediaRecorder = null;
+                        resolve(true);
+                    };
+                    mediaRecorder.stop();
+                });
+            }
+
+            // 摄像头预览小窗口缩放控制
+            $('#closeWebcam').on('click', function (e) {
+                e.stopPropagation();
+                $('#webcamContainer').addClass('minimized');
+            });
+
+            $('#webcamContainer').on('click', function () {
+                if ($(this).hasClass('minimized')) {
+                    $(this).removeClass('minimized');
+                }
+            });
+
+            // 结束实验按钮
+            $('#endExperiment').on('click', async function () {
+                if (!stream) {
+                    $('#statusText').text('Experiment not started yet.');
+                    return;
+                }
+                $('#statusText').text('Finishing and uploading video files...');
+
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    await stopAndUploadVideo();
+                }
+
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                    webcam.srcObject = null;
+                }
+                $('#endExperiment').prop('disabled', true);
+                $('#webcamContainer').hide();
+
+                window.location.href = `/phq9?participant_id=${participantId}`;
+            });
+        });
+    </script>
+</body>
+
+</html>
